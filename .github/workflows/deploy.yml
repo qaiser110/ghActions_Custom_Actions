@@ -4,13 +4,6 @@ on:
     branches:
       - main
 jobs:
-  info:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Get code
-        uses: actions/checkout@v3
-      - name: Run Custom JS GitHub Action
-        uses: ./.github/actions/deploy-s3-js
   lint:
     runs-on: ubuntu-latest
     steps:
@@ -56,7 +49,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: dist-files
-          path: dist
+          path: ./dist
   deploy:
     needs: build
     runs-on: ubuntu-latest
@@ -71,4 +64,11 @@ jobs:
       - name: Output contents
         run: ls
       - name: Deploy site
-        run: echo "Deploying..."
+        uses: ./.github/actions/deploy-s3-js
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        with:
+          bucket: "custom-gh-action-hosting"
+          dist-folder: "./dist"
+          bucket-region: "ap-southeast-2"
