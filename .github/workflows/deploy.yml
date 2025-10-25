@@ -7,6 +7,8 @@ jobs:
   info:
     runs-on: ubuntu-latest
     steps:
+      - name: Get code
+        uses: actions/checkout@v3
       - name: Run Custom JS GitHub Action
         uses: ./.github/actions/deploy-s3-js
   lint:
